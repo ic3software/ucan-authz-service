@@ -1,5 +1,4 @@
 import type { DidableKey } from "@ucans/ucans"
-import { exportPublicKey } from "./crypto"
 import * as uint8arrays from "uint8arrays"
 
 export async function toDidableKey(keypair: CryptoKeyPair): Promise<DidableKey> {
@@ -8,8 +7,6 @@ export async function toDidableKey(keypair: CryptoKeyPair): Promise<DidableKey> 
 
     const publicKeyBytes = await crypto.subtle.exportKey('raw', publicKey)
     const did = publicKeyToDid(new Uint8Array(publicKeyBytes))
-
-    console.log('did', did);
 
     return {
         jwtAlg: 'EdDSA',
@@ -21,6 +18,7 @@ export async function toDidableKey(keypair: CryptoKeyPair): Promise<DidableKey> 
     }
 }
 
+// The following code is from the ucans library
 export const EDWARDS_DID_PREFIX = new Uint8Array([0xed, 0x01])
 
 export const publicKeyToDid = (pubkey: Uint8Array): string => {

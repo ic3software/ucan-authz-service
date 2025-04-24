@@ -61,10 +61,19 @@
 
 		try {
 			const selectedCapabilities = capabilities.filter((cap) => selectedCaps.includes(cap));
+			const issuer = await toDidableKey(keypair);
+			console.log('issuer', issuer.did());
+			console.log('audience', serverDidKey);
+			console.log('capabilities', selectedCapabilities);
+			console.log('proofs', [inputToken]);
 			const newUcan = await ucans.build({
 				issuer: await toDidableKey(keypair),
 				audience: serverDidKey,
-				capabilities: selectedCapabilities
+				lifetimeInSeconds: 60 * 60,
+				capabilities: selectedCapabilities,
+				proofs: [
+					inputToken
+				]
 			});
 			const token = ucans.encode(newUcan);
 			finalUcan = token;
