@@ -2,7 +2,7 @@ import { verifyUcan } from '$lib/verifyUcan';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ request }) => {
-	const xPublicKey = request.headers.get('X-PublicKey');
+	const xPublicKey = request.headers.get('X-Public-Key');
 	const authHeader = request.headers.get('Authorization');
 
 	if (!xPublicKey) {
@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ request }) => {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const xPublicKey = request.headers.get('X-PublicKey');
+	const xPublicKey = request.headers.get('X-Public-Key');
 	const authHeader = request.headers.get('Authorization');
 
 	if (!xPublicKey) {
@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ request }) => {
-	const xPublicKey = request.headers.get('X-PublicKey');
+	const xPublicKey = request.headers.get('X-Public-Key');
 	const authHeader = request.headers.get('Authorization');
 
 	if (!xPublicKey) {

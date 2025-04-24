@@ -1,8 +1,58 @@
 <script lang="ts">
-	let inputToken = $state('');
+	import { exportPublicKey } from '$lib/crypto';
+	import { getKey } from '$lib/crypto';
 
-	function checkPermission(permissionType: string) {
-		console.log(`Checking ${permissionType} permission for token:`, inputToken);
+	let inputToken = $state('');
+	let successMessage = $state('');
+	let errorMessage = $state('');
+
+	async function checkPermission(permissionType: string) {
+		successMessage = '';
+		errorMessage = '';
+
+		try {
+			const publicKey = await getKey('publicKey');
+			if (!publicKey) {
+				throw new Error('Public key not found');
+			}
+
+			console.log('publicKey', publicKey);
+
+			const xPublicKey = await exportPublicKey(publicKey);
+			console.log('xPublicKey', xPublicKey);
+			const headers = {
+				'X-Public-Key': xPublicKey,
+				'Authorization': `Bearer ${inputToken}`
+			};
+
+			console.log('headers', headers);
+
+			let response;
+			switch (permissionType) {
+				case 'read':
+					response = await fetch('/api/email', { method: 'GET', headers });
+					break;
+				case 'create':
+					response = await fetch('/api/email', { method: 'POST', headers });
+					break;
+				case 'delete':
+					response = await fetch('/api/email', { method: 'DELETE', headers });
+					break;
+				default:
+					throw new Error('Invalid permission type');
+			}
+
+			if (response.status === 200) {
+				successMessage = `${permissionType} permission granted`;
+			} else if (response.status === 401) {
+				errorMessage = `${permissionType} permission denied`;
+			} else {
+				errorMessage = `Unexpected response status: ${response.status}`;
+			}
+		} catch (error: any) {
+			console.error(`Error checking ${permissionType} permission:`, error);
+			errorMessage = `Error checking ${permissionType} permission: ${error.message}`;
+		}
 	}
 </script>
 
@@ -15,8 +65,8 @@
 	</p>
 
 	<button
-		onclick={() => (window.location.href = '/delegate')}
 		class="mb-4 rounded bg-green-500 px-6 py-3 text-white shadow-md transition duration-300 hover:bg-green-600"
+		onclick={() => (window.location.href = '/delegate')}
 	>
 		Go to Delegate Page
 	</button>
@@ -48,4 +98,7 @@
 			Check Delete Email Permission
 		</button>
 	</div>
+
+	<p class="mt-4 text-green-500">{successMessage}</p>
+	<p class="mt-4 text-red-500">{errorMessage}</p>
 </div>
