@@ -92,13 +92,16 @@ export async function signRequest(payload: unknown, privateKey: CryptoKey): Prom
 	}
 }
 
+export const EDWARDS_DID_PREFIX = new Uint8Array([0xed, 0x01]);
+
 /**
  * Exports the public key as a base58btc string.
  */
 export async function exportPublicKey(publicKey: CryptoKey): Promise<string> {
 	try {
 		const exported = await crypto.subtle.exportKey('raw', publicKey);
-		return uint8arrays.toString(new Uint8Array(exported), 'base58btc');
+		const prefixed = uint8arrays.concat([EDWARDS_DID_PREFIX, new Uint8Array(exported)]);
+		return uint8arrays.toString(prefixed, 'base58btc');
 	} catch (error) {
 		console.error('Error exporting public key:', error);
 		throw new Error('Failed to export public key');

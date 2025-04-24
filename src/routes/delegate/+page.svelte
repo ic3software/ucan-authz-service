@@ -14,7 +14,7 @@
 	let error = $state('');
 	let selectedCaps = $state<ucans.Capability[]>([]);
 	let keypair: { publicKey: CryptoKey; privateKey: CryptoKey } | null = $state(null);
-    let finalUcan: string | null = $state('');
+	let finalUcan: string | null = $state('');
 
 	async function parseToken() {
 		error = '';
@@ -66,9 +66,7 @@
 				audience: serverDidKey,
 				lifetimeInSeconds: 60 * 60,
 				capabilities: selectedCapabilities,
-				proofs: [
-					inputToken
-				]
+				proofs: [inputToken]
 			});
 			const token = ucans.encode(newUcan);
 			finalUcan = token;
@@ -79,11 +77,14 @@
 	}
 
 	function copyToClipboard(text: string) {
-		navigator.clipboard.writeText(text).then(() => {
-			alert('Token copied to clipboard!');
-		}, (err) => {
-			console.error('Could not copy text: ', err);
-		});
+		navigator.clipboard.writeText(text).then(
+			() => {
+				alert('Token copied to clipboard!');
+			},
+			(err) => {
+				console.error('Could not copy text: ', err);
+			}
+		);
 	}
 
 	onMount(async () => {
@@ -157,7 +158,10 @@
 		</button>
 	{/if}
 
-	<a href="/" class="mt-8 block text-center rounded bg-gray-500 px-6 py-3 text-white shadow-md transition duration-300 hover:bg-gray-600">
+	<a
+		href="/"
+		class="mt-8 block rounded bg-gray-500 px-6 py-3 text-center text-white shadow-md transition duration-300 hover:bg-gray-600"
+	>
 		Go to Home
 	</a>
 </div>
