@@ -61,11 +61,6 @@
 
 		try {
 			const selectedCapabilities = capabilities.filter((cap) => selectedCaps.includes(cap));
-			const issuer = await toDidableKey(keypair);
-			console.log('issuer', issuer.did());
-			console.log('audience', serverDidKey);
-			console.log('capabilities', selectedCapabilities);
-			console.log('proofs', [inputToken]);
 			const newUcan = await ucans.build({
 				issuer: await toDidableKey(keypair),
 				audience: serverDidKey,
@@ -81,6 +76,14 @@
 			console.error(e);
 			error = 'Failed to build UCAN: ' + (e as Error).message;
 		}
+	}
+
+	function copyToClipboard(text: string) {
+		navigator.clipboard.writeText(text).then(() => {
+			alert('Token copied to clipboard!');
+		}, (err) => {
+			console.error('Could not copy text: ', err);
+		});
 	}
 
 	onMount(async () => {
@@ -146,5 +149,15 @@
 	{#if finalUcan}
 		<h2 class="mt-8 text-xl font-semibold">Generated UCAN:</h2>
 		<p class="mt-4 break-words">{finalUcan}</p>
+		<button
+			onclick={() => copyToClipboard(finalUcan ?? '')}
+			class="mt-4 rounded bg-yellow-500 px-6 py-3 text-white shadow-md transition duration-300 hover:bg-yellow-600"
+		>
+			Copy Token
+		</button>
 	{/if}
+
+	<a href="/" class="mt-8 block text-center rounded bg-gray-500 px-6 py-3 text-white shadow-md transition duration-300 hover:bg-gray-600">
+		Go to Home
+	</a>
 </div>

@@ -14,21 +14,6 @@ export async function verifyUcan(encodedUcan: string, recipient: string, action:
     const serverDidKey = keypair.did();
     const rootIssuerDidKey = PRIVATE_ROOT_ISSUER_DID_KEY;
 
-    const decoded = ucans.parse(encodedUcan)
-
-    console.log("ISS:", decoded.payload.iss)
-    console.log("AUD:", decoded.payload.aud)
-    console.log("ATT:", decoded.payload.att)
-    console.log("Action:", decoded.payload.att[0].can)
-    console.log("EXP:", decoded.payload.exp)
-    console.log("PRF:", decoded.payload.prf)
-
-    console.log(serverDidKey);
-    console.log(rootIssuerDidKey);
-    console.log(encodedUcan);
-    console.log(recipient);
-    console.log(action);
-
     const result = await ucans.verify(encodedUcan, {
         audience: serverDidKey,
         requiredCapabilities: [
@@ -42,8 +27,6 @@ export async function verifyUcan(encodedUcan: string, recipient: string, action:
         ],
         isRevoked: async () => false
     })
-
-    console.log(result);
 
     if (result.ok) {
         return result.value;
